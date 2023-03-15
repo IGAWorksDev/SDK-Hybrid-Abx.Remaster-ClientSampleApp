@@ -47,44 +47,40 @@ enum AdBrixAction: String {
                   let orderSales = json["order_sales"] as? Double,
                   let discount = json["discount"] as? Double,
                   let deliveryCharge = json["delivery_charge"] as? Double,
-                  let price = json["price"] as? Double,
                   let paymentMethodValue = json["payment_method"] as? Int,
-                  let currencyValue = json["currency"] as? Int,
                   let quantity = json["quantity"] as? Int,
-                  let items = json["items"] as? [String: Any],
-                  let categoryJson = json["categories"] as? [String: Any] else {return}
+                  let items = json["items"] as? NSArray else {return}
             
-            var categoryValue = [String]()
+            let productModel = AdBrixRmCommerceProductModel()
+            for (value) in items {
+                guard let map = value as? [String: Any] else {return}
+                print(map)
+                guard let productId = map["product_id"] as? String,
+                      let productName = map["product_name"] as? String,
+                      let price = map["price"] as? Double,
+                      let quantity = map["quantity"] as? Int,
+                      let discount = map["discount"] as? Double,
+                      let currencyNum = map["currency"] as? Int,
+                      let categoryString = map["categories"] as? [String:String]
+                else {return}
+                
+                var categoryArray = [String](repeating: "", count: 5)
+                var idx = 0
+                for (_, value) in categoryString {
+                    categoryArray[idx] = value
+                    idx = idx + 1
+                }
+                
+                let currencyString = adbrix.getCurrencyString(currencyNum)
+                let category = adbrix.createCommerceProductCategoryData(category: categoryArray[0], category2: categoryArray[1], category3: categoryArray[2], category4: categoryArray[3], category5: categoryArray[4])
             
-            for (_, value) in categoryJson {
-                guard let value = value as? String else {return}
-                categoryValue.append(value)
+                productModel.setModel(productId: productId, productName: productName, price: price, quantity: quantity, discount: discount, currencyString: currencyString, categories: category, productAttrsMap: nil)
             }
             
-            let category = AdBrixRmCommerceProductCategoryModel().setModel(categoryArr: categoryValue)
-            
-            let currency = adbrix.getCurrencyString(currencyValue)
-
-            let productModel = adbrix
-                .createCommerceProductDataWithAttr(productId: productId,
-                                                   productName: productName,
-                                                   price: price,
-                                                   quantity: quantity,
-                                                   discount: 0,
-                                                   currencyString: currency,
-                                                   category: category,
-                                                   productAttrsMap: nil)
-
-            adbrix.commonPurchase(orderId: orderId,
-                                  productInfo: [productModel],
-                                  discount: 0,
-                                  deliveryCharge: 0,
-                                  paymentMethod: .init(rawValue: paymentMethodValue) ?? .ETC)
-        
+            adbrix.commonPurchase(orderId: orderId, productInfo: [productModel], discount: discount, deliveryCharge: deliveryCharge, paymentMethod: adbrix.convertPayment(paymentMethodValue))
             
         case .viewHome:
             adbrix.commerceViewHome()
-            
         }
     }
 }
