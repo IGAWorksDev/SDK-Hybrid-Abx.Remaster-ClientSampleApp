@@ -105,3 +105,50 @@ function login(userId){
     }
 }
 ```
+
+### Step 8. 완료 되었습니다.
+
+---
+
+### Bridge 작성 요령
+
+#### 웹페이지에서 Native에 전달되는 이벤트는 전부 `postMessage` function을 통해 들어옵니다. 
+
+```javascript
+const param = {
+    method_name : AdbrixMethodName.login,  // 원하는 API명을 입력.
+    user_id : userId
+};
+	
+if (isIosBridgeAvailable()) {
+	window.webkit.messageHandlers.adbrixBridge.postMessage(param);
+}
+```
+
+- SDK의 동작해야할 메소드는 `method_name` 키 값으로 설정하여 전달해야합니다.
+
+	```swift
+	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard message.name == interfaceName,
+              let json = message.body as? [String: Any],
+              let action = json["method_name"] as? String else {return}
+        guard let event = AdbrixJavascriptInterface(rawValue: action) else {return}
+        event.invoke(json: json)
+    }
+	```
+	
+- 해당하는 메소드에 필요한 파라미터를 데이터에 넣고 전달하여 SDK 메소드를 호출해야 합니다.
+
+	```swift
+	enum AdbrixJavascriptInterface: String {
+		case login
+		func invoke(json: [String: Any]) {
+			let adbrix = AdBrixRM.sharedInstance()
+			switch self {
+			case .login:
+	            guard let userId = json["user_id"] as? String else {return}
+	            adbrix.login(userId: userId)
+	        }
+	    }
+	}
+	```
