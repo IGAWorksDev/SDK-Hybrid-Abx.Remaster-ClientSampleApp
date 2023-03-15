@@ -60,7 +60,71 @@ function login(userId){
     };
 
     if (isAndroidBridgeAvailable()) {
-        adbrixBridge.invoke(param);
+        adbrixBridge.invoke(JSON.stringify(param));
     } 
 }
 ```
+
+### Step 5. Log를 확인하여 이벤트가 정상적으로 호출됐는지 확인합니다.
+
+```
+11:00:36.404  I  received json: {"method_name":"viewHome"}
+...
+```
+
+### Step 6. 완료 되었습니다.
+
+---
+
+### Bridge 작성 요령
+
+#### 웹페이지에서 Native에 전달되는 이벤트는 전부 `invoke` function을 통해 들어옵니다. 
+
+- JSON 식으로 변환된 데이터를 사용하기에 웹페이지에서 스크립트를 통해 `invoke` function을 호출할 때 데이터를 JSON 식으로 변환한다음 전달해줘야 합니다.
+
+	```javascript
+	const param = {
+	    method_name : AdbrixMethodName.login,  // 원하는 API명을 입력.
+	    user_id : userId
+	};
+	
+	if (isAndroidBridgeAvailable()) {
+	    adbrixBridge.invoke(JSON.stringify(param)); //JSON으로 변환
+	}
+	```
+
+- SDK의 동작해야할 메소드는 `method_name` 키 값으로 설정하여 전달해야합니다.
+
+	```java
+	@JavascriptInterface
+	public void invoke(String json){
+		JSONObject jsonObject = new JSONObject(json);
+		 String methodName = jsonObject.optString("method_name");
+	}
+	```
+
+- 해당하는 메소드에 필요한 파라미터를 JSON 데이터에 넣고 전달하여 SDK 메소드를 호출해야 합니다.
+
+	```java
+	@JavascriptInterface
+	public void invoke(String json){
+		...
+		switch (methodName){
+		    case "login":{
+		        login(json);
+		        break;
+		    }
+		    ...
+		}
+	}
+	private void login(String json){
+	    JSONObject jsonObject = null;
+	    try {
+	        jsonObject = new JSONObject(json);
+	        String userId = jsonObject.optString("user_id");
+	        AdBrixRm.login(userId);
+	    } catch (JSONException e) {
+	        e.printStackTrace();
+	    }
+	}
+	```
