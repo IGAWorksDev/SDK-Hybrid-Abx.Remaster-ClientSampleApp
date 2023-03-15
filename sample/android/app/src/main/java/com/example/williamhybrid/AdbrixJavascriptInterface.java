@@ -1,6 +1,7 @@
 package com.example.williamhybrid;
 
 import android.content.Context;
+import android.text.PrecomputedText;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
@@ -133,8 +134,8 @@ public class AdbrixJavascriptInterface {
         try {
             JSONObject jsonObject = new JSONObject(json);
             int signUpChannel = jsonObject.optInt("sign_channel");
-            JSONObject properties = jsonObject.getJSONObject("sign_up_properties");
-            AdBrixRm.AttrModel attrModel = getAttrModelFromJsonObject(properties);
+            JSONObject extraAttr = jsonObject.getJSONObject("extra_attr");
+            AdBrixRm.AttrModel attrModel = getAttrModelFromJsonObject(extraAttr);
             AdBrixRm.CommonProperties.SignUp signUp = new AdBrixRm.CommonProperties.SignUp().setAttrModel(attrModel);
             AdBrixRm.Common.signUp(AdBrixRm.CommonSignUpChannel.getChannelByChannelCode(signUpChannel), signUp);
         } catch (JSONException e) {
@@ -161,13 +162,12 @@ public class AdbrixJavascriptInterface {
             double deliveryCharge = jsonObject.getDouble("delivery_charge");
             int paymentMethod = jsonObject.getInt("payment_method");
             AdBrixRm.CommercePaymentMethod method = AdBrixRm.CommercePaymentMethod.getMethodByMethodCode(paymentMethod);
-
-//            String properties = jsonObject.optString("properties");
-//            AdBrixRm.AttrModel attrModel = getAttrModelFromJsonObject(new JSONObject(properties));
-//            AdBrixRm.CommonProperties.Purchase purchase = new AdBrixRm.CommonProperties.Purchase();
-//            purchase.setAttrModel(attrModel);
             String productModelList = jsonObject.optString("items");
-            List<AdBrixRm.CommerceProductModel> commerceProductModelList = getCommerceProductModelListByJsonString(productModelList);
+            List<AdBrixRm.CommerceProductModel> commerceProductModelList = getProductListByJsonString(productModelList);
+            String extraAttr = jsonObject.optString("extra_attr");
+            AdBrixRm.AttrModel attrModel = getAttrModelFromJsonObject(new JSONObject(extraAttr));
+            AdBrixRm.CommonProperties.Purchase purchase = new AdBrixRm.CommonProperties.Purchase();
+            purchase.setAttrModel(attrModel);
             AdBrixRm.Common.purchase(orderId, commerceProductModelList, orderSales, discount, deliveryCharge, method);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -177,130 +177,79 @@ public class AdbrixJavascriptInterface {
     private void addToWishList(String json){
         try {
             JSONObject jsonObject = new JSONObject(json);
-            String productModelList = jsonObject.optString("productModelList");
-            List<AdBrixRm.CommerceProductModel> commerceProductModelList = getCommerceProductModelListByJsonString(productModelList);
-            String properties = jsonObject.optString("properties");
-            AdBrixRm.AttrModel attrModel = getAttrModelFromJsonObject(new JSONObject(properties));
+            String productModelList = jsonObject.optString("items");
+            List<AdBrixRm.CommerceProductModel> commerceProductModelList = getProductListByJsonString(productModelList);
+            String extraAttr = jsonObject.optString("extra_attr");
+            AdBrixRm.AttrModel attrModel = getAttrModelFromJsonObject(new JSONObject(extraAttr));
             AdBrixRm.Commerce.addToWishList(commerceProductModelList, attrModel);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
-    private List<AdBrixRm.CommerceProductModel> getCommerceProductModelListByJsonString(String dataJsonString) {
+    private List<AdBrixRm.CommerceProductModel> getProductListByJsonString(String json){
+        ArrayList<AdBrixRm.CommerceProductModel> result = new ArrayList<AdBrixRm.CommerceProductModel>();
         try {
-            JSONArray root = new JSONArray(dataJsonString);
-
-            if (root.length() < 1) {
-                Log.e("abxrm", "commerceV2PlugIn error : No purhcase item.");
-                return null;
+            JSONArray root = new JSONArray(json);
+            for(int i=0; i<root.length(); i++){
+                JSONObject productJson = root.getJSONObject(i);
+                AdBrixRm.CommerceProductModel productModel = getProductByJsonObject(productJson);
+                result.add(productModel);
             }
-
-            ArrayList<AdBrixRm.CommerceProductModel> items = new ArrayList<AdBrixRm.CommerceProductModel>();
-
-            for (int i = 0; i < root.length(); i++) {
-                try {
-                    JSONObject item = root.getJSONObject(i);
-                    AdBrixRm.CommerceProductModel pItem = new AdBrixRm.CommerceProductModel();
-
-                    if (item.has("productId")) {
-                        Log.i("abxrm", "Productname is " + item.getString("productId"));
-                        pItem.setProductID(item.getString("productId"));
-                    } else {
-                        throw new Exception("No productId attribute.");
-                    }
-                    if (item.has("productName")) {
-                        pItem.setProductName(item.getString("productName"));
-                    } else {
-                        throw new Exception("No productName attribute.");
-                    }
-                    if (item.has("price")) {
-                        pItem.setPrice(Double.parseDouble(item.getString("price")));
-                    } else {
-                        throw new Exception("No price attribute.");
-                    }
-                    if (item.has("discount")) {
-                        pItem.setDiscount(Double.parseDouble(item.getString("discount")));
-                    } else {
-                        throw new Exception("No discount attribute.");
-                    }
-                    if (item.has("quantity")) {
-                        pItem.setQuantity(Integer.parseInt(item.getString("quantity")));
-                    } else {
-                        throw new Exception("No quantity attribute.");
-                    }
-                    if (item.has("currency")) {
-                        pItem.setCurrency(getCurrencyByCurrencyCode(item.getInt("currency")));
-                    } else {
-                        throw new Exception("No currency attribute.");
-                    }
-                    if (item.has("category")) {
-                        String[] categories = new String[5];
-                        String[] temp = item.getString("category") != null ? item.getString("category").split("\\.") : new String[0];
-
-                        for (int j = 0; j < temp.length; j++) {
-                            categories[j] = temp[j];
-                        }
-
-                        AdBrixRm.CommerceCategoriesModel categoriesModel = new AdBrixRm.CommerceCategoriesModel();
-
-                        if (categories.length == 1) categoriesModel.setCategory(categories[0]);
-                        else if (categories.length == 2)
-                            categoriesModel.setCategory(categories[0]).setCategory(categories[1]);
-                        else if (categories.length == 3)
-                            categoriesModel.setCategory(categories[0]).setCategory(categories[1]).setCategory(categories[2]);
-                        else if (categories.length == 4)
-                            categoriesModel.setCategory(categories[0]).setCategory(categories[1]).setCategory(categories[2]).setCategory(categories[3]);
-                        else if (categories.length == 5)
-                            categoriesModel.setCategory(categories[0]).setCategory(categories[1]).setCategory(categories[2]).setCategory(categories[3]).setCategory(categories[4]);
-                        pItem.setCategory(categoriesModel);
-                    } else {
-                        throw new Exception("No category attribute.");
-                    }
-                    if (item.has("extra_attrs")) {
-                        final JSONObject subItem = item.getJSONObject("extra_attrs");
-                        JSONObject attrs = new JSONObject();
-                        Iterator<?> keys = subItem.keys();
-
-                        while (keys.hasNext()) {
-                            String key = (String) keys.next();
-                            String value = subItem.getString(key);
-                            attrs.put(key, value);
-                        }
-                        pItem.setAttrModel(getAttrModelFromJsonObject(attrs));
-                    } else {
-                        throw new Exception("No extra_attrs attribute.");
-                    }
-                    items.add(pItem);
-                } catch (Exception e) {
-                    Log.e("abxrm", "purchase error : invalid item = " + dataJsonString);
-                }
-            }
-            return items;
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
-
-    private AdBrixRm.CommerceCategoriesModel getCommerceCategoriesModelFromList(String categoryString) {
+    private AdBrixRm.CommerceProductModel getProductByJsonString(String json){
+        AdBrixRm.CommerceProductModel result = new AdBrixRm.CommerceProductModel();
         try {
-            String[] temp = categoryString != null ? categoryString.split("\\.") : new String[0];
-            AdBrixRm.CommerceCategoriesModel categories = new AdBrixRm.CommerceCategoriesModel();
+            JSONObject jsonObject = new JSONObject(json);
+            return getProductByJsonObject(jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return result;
+        }
+    }
+    private AdBrixRm.CommerceProductModel getProductByJsonObject(JSONObject jsonObject){
+        AdBrixRm.CommerceProductModel result = new AdBrixRm.CommerceProductModel();
+        String productId = jsonObject.optString("product_id");
+        String productName = jsonObject.optString("product_name");
+        double price = jsonObject.optDouble("price");
+        int quantity = jsonObject.optInt("quantity");
+        double discount = jsonObject.optDouble("discount");
+        double sales = jsonObject.optDouble("sales");
+        int currencyCode = jsonObject.optInt("currency");
+        String categories = jsonObject.optString("categories");
 
-            if (temp.length == 1) return categories.setCategory(temp[0]);
-            else if (temp.length == 2) return categories.setCategory(temp[0]).setCategory(temp[1]);
-            else if (temp.length == 3)
-                return categories.setCategory(temp[0]).setCategory(temp[1]).setCategory(temp[2]);
-            else if (temp.length == 4)
-                return categories.setCategory(temp[0]).setCategory(temp[1]).setCategory(temp[2]).setCategory(temp[3]);
-            else if (temp.length == 5)
-                return categories.setCategory(temp[0]).setCategory(temp[1]).setCategory(temp[2]).setCategory(temp[3]).setCategory(temp[4]);
-        } catch (Exception e) {
+        result.setProductID(productId);
+        result.setProductName(productName);
+        result.setPrice(price);
+        result.setQuantity(quantity);
+        result.setDiscount(discount);
+        result.sales = sales;
+        result.setCurrency(getCurrencyByCurrencyCode(currencyCode));
+        result.setCategory(getCategoryModel(categories));
+        return result;
+    }
+    private AdBrixRm.CommerceCategoriesModel getCategoryModel(String json){
+        AdBrixRm.CommerceCategoriesModel result = new AdBrixRm.CommerceCategoriesModel();
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            if(jsonObject.length() == 0){
+                return result;
+            }
+            for(int i=1; i<=jsonObject.length(); i++){
+                String category = jsonObject.optString("category"+i);
+                if(CommonUtils.isNullOrEmpty(category)){
+                   continue;
+                }
+                result.setCategory(category);
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
 
     private AdBrixRm.AttrModel getAttrModelFromJsonObject(JSONObject jsonObject) {
@@ -314,7 +263,7 @@ public class AdbrixJavascriptInterface {
             try {
                 result.setAttrs(key, jsonObject.get(key));
             } catch (JSONException e) {
-
+                e.printStackTrace();
             }
         }
         return result;
