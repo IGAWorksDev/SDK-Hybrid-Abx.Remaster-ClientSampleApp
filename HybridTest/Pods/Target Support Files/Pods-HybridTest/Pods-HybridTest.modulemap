@@ -1,0 +1,6 @@
+framework module Pods_HybridTest {
+  umbrella header "Pods-HybridTest-umbrella.h"
+
+  export *
+  module * { export * }
+}
