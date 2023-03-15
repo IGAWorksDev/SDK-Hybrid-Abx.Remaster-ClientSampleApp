@@ -1,5 +1,5 @@
 //
-//  AdbrixAction.swift
+//  AdbrixJavascriptInterface.swift
 //  HybridTest
 //
 //  Created by Jimmy.강세훈 on 2023/03/14.
@@ -8,7 +8,7 @@
 import Foundation
 import AdBrixRmKit
 
-enum AdBrixAction: String {
+enum AdbrixJavascriptInterface: String {
     case login
     case logout
     case signUp

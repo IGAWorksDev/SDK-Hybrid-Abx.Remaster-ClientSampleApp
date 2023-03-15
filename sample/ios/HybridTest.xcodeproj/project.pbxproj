@@ -13,7 +13,7 @@
 		9C88341A29C0152900FF8D8D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C88341929C0152900FF8D8D /* ViewController.swift */; };
 		9C88341F29C0152A00FF8D8D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C88341E29C0152A00FF8D8D /* Assets.xcassets */; };
 		9C88342229C0152A00FF8D8D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C88342029C0152A00FF8D8D /* LaunchScreen.storyboard */; };
-		9C88342A29C0441B00FF8D8D /* AdbrixAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C88342929C0441B00FF8D8D /* AdbrixAction.swift */; };
+		9C88342A29C0441B00FF8D8D /* AdbrixJavascriptInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C88342929C0441B00FF8D8D /* AdbrixJavascriptInterface.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +25,7 @@
 		9C88341E29C0152A00FF8D8D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9C88342129C0152A00FF8D8D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9C88342329C0152A00FF8D8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9C88342929C0441B00FF8D8D /* AdbrixAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdbrixAction.swift; sourceTree = "<group>"; };
+		9C88342929C0441B00FF8D8D /* AdbrixJavascriptInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdbrixJavascriptInterface.swift; sourceTree = "<group>"; };
 		F3564AE76FD76A260BE746CD /* Pods-HybridTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HybridTest.debug.xcconfig"; path = "Target Support Files/Pods-HybridTest/Pods-HybridTest.debug.xcconfig"; sourceTree = "<group>"; };
 		F5611634B6C76FAF062F85B9 /* Pods_HybridTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HybridTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -83,7 +83,7 @@
 				9C88341529C0152900FF8D8D /* AppDelegate.swift */,
 				9C88341729C0152900FF8D8D /* SceneDelegate.swift */,
 				9C88341929C0152900FF8D8D /* ViewController.swift */,
-				9C88342929C0441B00FF8D8D /* AdbrixAction.swift */,
+				9C88342929C0441B00FF8D8D /* AdbrixJavascriptInterface.swift */,
 				9C88341E29C0152A00FF8D8D /* Assets.xcassets */,
 				9C88342029C0152A00FF8D8D /* LaunchScreen.storyboard */,
 				9C88342329C0152A00FF8D8D /* Info.plist */,
@@ -206,7 +206,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9C88341A29C0152900FF8D8D /* ViewController.swift in Sources */,
-				9C88342A29C0441B00FF8D8D /* AdbrixAction.swift in Sources */,
+				9C88342A29C0441B00FF8D8D /* AdbrixJavascriptInterface.swift in Sources */,
 				9C88341629C0152900FF8D8D /* AppDelegate.swift in Sources */,
 				9C88341829C0152900FF8D8D /* SceneDelegate.swift in Sources */,
 			);

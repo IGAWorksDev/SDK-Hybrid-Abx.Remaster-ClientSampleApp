@@ -48,7 +48,7 @@ extension ViewController: WKScriptMessageHandler {
               let json = message.body as? [String: Any],
               let action = json["method_name"] as? String else {return}
         
-        guard let event = AdBrixAction(rawValue: action) else {return}
+        guard let event = AdbrixJavascriptInterface(rawValue: action) else {return}
         
         event.invoke(json: json)
     }
