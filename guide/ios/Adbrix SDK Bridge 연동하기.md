@@ -11,7 +11,7 @@ SDK를 사용하기 위해선 AppDelegate에서의 initAdbrix 메소드 호출�
 ```swift
 import AdBrixRmKit
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, AdBrixRMLogDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     let adBrix = AdBrixRM.getInstance
@@ -38,11 +38,9 @@ Bridge는 웹페이지와 SDK를 통신하기 위해 [예시용 JavascriptInterf
 
 ```swift
 func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-    guard message.name == "adbrixBridge",
-          let json = message.body as? [String: Any],
-          let action = json["method_name"] as? String else {return}
-    guard let event = AdbrixJavascriptInterface(rawValue: action) else {return}
-    event.invoke(json: json)
+    if message.name == interfaceName {
+        AdbrixJavascriptInterface.event(message: message.body)
+    }
 }
 ```
 
