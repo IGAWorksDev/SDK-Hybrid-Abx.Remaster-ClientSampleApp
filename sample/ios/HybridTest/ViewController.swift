@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     override func loadView() {
         let webConfiguration = WKWebViewConfiguration()
         let contentController = WKUserContentController()
-        contentController.add(self, name: interfaceName)
+        contentController.add(WeakContentController(delegate: self), name: interfaceName)
         webConfiguration.userContentController = contentController
         
         webView = WKWebView(frame: .zero, configuration: webConfiguration)
@@ -37,21 +37,34 @@ class ViewController: UIViewController {
             let request = URLRequest(url: url)
             webView.load(request)
         }
+        
+        //WebView cache 삭제
+        let dataTypes = NSSet(array: [WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache])
+        let date = Date(timeIntervalSince1970: 0)
+        WKWebsiteDataStore.default().removeData(ofTypes: dataTypes as! Set<String>, modifiedSince: date, completionHandler: {})
     }
 }
 
 extension ViewController: WKScriptMessageHandler {
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        
-        guard message.name == interfaceName,
-              let json = message.body as? [String: Any],
-              let action = json["method_name"] as? String else {return}
-        
-        guard let event = AdbrixJavascriptInterface(rawValue: action) else {return}
-        
-        event.invoke(json: json)
+        if message.name == interfaceName {
+            AdbrixJavascriptInterface.event(message: message.body)
+        }
     }
     
 }
 
+//Memory leak을 해결하기 위한 클래스
+class WeakContentController: NSObject, WKScriptMessageHandler {
+    weak var delegate: WKScriptMessageHandler?
+    
+    init(delegate: WKScriptMessageHandler) {
+        self.delegate = delegate
+        super.init()
+    }
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        self.delegate?.userContentController(userContentController, didReceive: message)
+    }
+}
