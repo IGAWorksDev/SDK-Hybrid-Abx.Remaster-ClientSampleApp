@@ -13,7 +13,7 @@ public class BaseApplication extends Application {
         sdkInit();
     }
     private void sdkInit(){
-        AdBrixRm.init(this, "RruMWZd2WkOnGtPSltICMw", "kdQnJTpBuUSj9sHzjAF7xA");
+        AdBrixRm.init(this, "{앱키}", "{시크릿키}");
         AdBrixRm.setOnDeeplinkListener(new AdBrixRm.onDeeplinkListener() {
             @Override
             public void onReceive(OnDeeplinkResult onDeeplinkResult) {

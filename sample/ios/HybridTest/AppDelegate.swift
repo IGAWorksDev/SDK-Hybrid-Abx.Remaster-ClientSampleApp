@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate  {
         
         let adBrix = AdBrixRM.getInstance
         
-        adBrix.initAdBrix(appKey: "RruMWZd2WkOnGtPSltICMw", secretKey: "kdQnJTpBuUSj9sHzjAF7xA")
+        adBrix.initAdBrix(appKey: "{앱키}", secretKey: "{시크릿키}")
         
         return true
     }
