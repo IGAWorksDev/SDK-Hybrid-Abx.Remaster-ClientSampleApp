@@ -98,10 +98,10 @@ const AdbrixInviteChannel = {
 }
 
 function login() {
-    var loginid = "login_id";
+    var userId = "login_id";
     const param = {
         method_name: AdbrixMethodName.login,  // 원하는 API명을 입력.
-        user_id: loginid
+        user_id: userId
     };
 
     if (isAndroidBridgeAvailable()) {
@@ -109,7 +109,7 @@ function login() {
     } else if (isIosBridgeAvailable()) {
         window.webkit.messageHandlers.adbrixBridge.postMessage(param);
     } else {
-        adbrix.login(loginid);
+        adbrix.login(userId);
     }
 }
 
@@ -128,18 +128,12 @@ function logout() {
 }
 
 function signUp() {
-    var loginid = "login_id";
-    var SignChannel = AdbrixSignUpChannel.AdBrixRmSignUpFacebookChannel;
-    var age = 14;
-    var gender = AdbrixGenderType.Female;
-    var married = true;
     const param = {
         method_name: AdbrixMethodName.signUp,
         sign_channel: AdbrixSignUpChannel.Google,  // number
         extra_attr: {
             user_id: "user_id",
-            gender: AdbrixGenderType.Male,  // number
-            age: age  // number
+            age: 14  // number
         }
     }
 
@@ -148,7 +142,10 @@ function signUp() {
     } else if (isIosBridgeAvailable()) {
         window.webkit.messageHandlers.adbrixBridge.postMessage(param);
     } else {
-        adbrix.common.signUp(SignChannel, { "userRegister": "userRegister", "test1": null, "test2": "https://web-sdk-prod-sec-dir.public.sre.dfinery.io/", "test3": "https://web-sdk-prod-sec-dir.public.sre.dfinery.io/", "test4": "https://web-sdk-prod-sec-dir.public.sre.dfinery.io/", "test5": "https://web-sdk-prod-sec-dir.public.sre.dfinery.io/", "test6": "https://web-sdk-prod-sec-dir.public.sre.dfinery.io/", "test7": "https://web-sdk-prod-sec-dir.public.sre.dfinery.io/", "test8": "https://web-sdk-prod-sec-dir.public.sre.dfinery.io/" });
+        adbrix.common.signUp('Google', { 
+            user_id: "user_id",
+            age: 14  // number
+         });
     }
 }
 
