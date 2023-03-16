@@ -53,7 +53,7 @@ class ViewController: UIViewController {
 	var webView: WKWebView!
 	
 	override func loadView() {
-	    ...
+		...
 	}
 }
 ```
@@ -125,11 +125,11 @@ if (isIosBridgeAvailable()) {
 }
 ```
 
-- SDK의 동작해야할 메소드는 `method_name` 키 값으로 설정하여 전달해야합니다.
+- SDK의 동작해야할 메소드는 `method_name` 키 값으로 설정하여 AdbrixJavascriptInterface에 전달해야합니다.
 
 	```swift
 	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard message.name == interfaceName,
+        guard message.name == "adbrixBridge",
               let json = message.body as? [String: Any],
               let action = json["method_name"] as? String else {return}
         guard let event = AdbrixJavascriptInterface(rawValue: action) else {return}
@@ -141,11 +141,11 @@ if (isIosBridgeAvailable()) {
 
 	```swift
 	enum AdbrixJavascriptInterface: String {
-		case login
+		case login	//동작할 SDK 이벤트 명칭
 		func invoke(json: [String: Any]) {
 			let adbrix = AdBrixRM.sharedInstance()
 			switch self {
-			case .login:
+			case .login: //이벤트 발생시 동작할 내용
 	            guard let userId = json["user_id"] as? String else {return}
 	            adbrix.login(userId: userId)
 	        }
