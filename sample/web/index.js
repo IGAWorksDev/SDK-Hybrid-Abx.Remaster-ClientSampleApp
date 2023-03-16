@@ -103,13 +103,12 @@ function login() {
         method_name: AdbrixMethodName.login,  // 원하는 API명을 입력.
         user_id: userId
     };
-
+    adbrix.login(userId);
     if (isAndroidBridgeAvailable()) {
         adbrixBridge.invoke(JSON.stringify(param));
-    } else if (isIosBridgeAvailable()) {
+    }
+    if (isIosBridgeAvailable()) {
         window.webkit.messageHandlers.adbrixBridge.postMessage(param);
-    } else {
-        adbrix.login(userId);
     }
 }
 
@@ -117,14 +116,13 @@ function logout() {
     const param = {
         method_name: AdbrixMethodName.logout
     }
-
+    adbrix.logout();
     if (isAndroidBridgeAvailable()) {
         adbrixBridge.invoke(JSON.stringify(param));
-    } else if (isIosBridgeAvailable()) {
-        window.webkit.messageHandlers.adbrixBridge.postMessage(param);
-    } else {
-        adbrix.logout();
     }
+    if (isIosBridgeAvailable()) {
+        window.webkit.messageHandlers.adbrixBridge.postMessage(param);
+      }
 }
 
 function signUp() {
@@ -136,16 +134,15 @@ function signUp() {
             age: 14  // number
         }
     }
-
+    adbrix.common.signUp('Google', {
+        user_id: "user_id",
+        age: 14  // number
+     });
     if (isAndroidBridgeAvailable()) {
         adbrixBridge.invoke(JSON.stringify(param));
-    } else if (isIosBridgeAvailable()) {
+    }
+    if (isIosBridgeAvailable()) {
         window.webkit.messageHandlers.adbrixBridge.postMessage(param);
-    } else {
-        adbrix.common.signUp('Google', { 
-            user_id: "user_id",
-            age: 14  // number
-         });
     }
 }
 
@@ -194,21 +191,20 @@ function purchase() {
             attrKey: "attrValue"
         }
     }
-
+    adbrix.common.purchase(
+        orderId,                      // 주문번호 order_id
+        products,                     // 상품리스트 product[]
+        orderSales,                      // 전체 주문 금액 order sales
+        discount,                      // 할인 금액 discount
+        1000,                      // 배송비 delivery charge
+        payment,                        // 결제 방법 payment
+        null              // 결제 프로퍼티 properties
+    );
     if (isAndroidBridgeAvailable()) {
         adbrixBridge.invoke(JSON.stringify(param));
-    } else if (isIosBridgeAvailable()) {
+    }
+    if (isIosBridgeAvailable()) {
         window.webkit.messageHandlers.adbrixBridge.postMessage(param);
-    } else {
-        adbrix.common.purchase(
-            orderId,                      // 주문번호 order_id
-            products,                     // 상품리스트 product[]
-            orderSales,                      // 전체 주문 금액 order sales
-            discount,                      // 할인 금액 discount
-            1000,                      // 배송비 delivery charge
-            payment,                        // 결제 방법 payment
-            null              // 결제 프로퍼티 properties
-        );
     }
 }
 
@@ -216,12 +212,11 @@ function viewHome() {
     const param = {
         method_name: AdbrixMethodName.viewHome
     }
-
+    adbrix.viewHome();
     if (isAndroidBridgeAvailable()) {
         adbrixBridge.invoke(JSON.stringify(param));
-    } else if (isIosBridgeAvailable()) {
+    }
+    if (isIosBridgeAvailable()) {
         window.webkit.messageHandlers.adbrixBridge.postMessage(param);
-    } else {
-        adbrix.viewHome();
     }
 }
