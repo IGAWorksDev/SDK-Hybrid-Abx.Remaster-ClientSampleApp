@@ -4,7 +4,7 @@
 
 ## 가이드
 ### Android
--  [Java](https://github.com/IGAWorksDev/SDK-Hybrid-Abx.Remaster-ClientSampleApp/blob/master/guide/android/Adbrix%20SDK%20Bridge%20연동하기.md)
+-  [Java](https://github.com/IGAWorksDev/SDK-Hybrid-Abx.Remaster-ClientSampleApp/blob/master/guide/android/java/Adbrix%20SDK%20Bridge%20연동하기.md)
 
 ### iOS
-- [Swift](https://github.com/IGAWorksDev/SDK-Hybrid-Abx.Remaster-ClientSampleApp/blob/master/guide/ios/Adbrix%20SDK%20Bridge%20연동하기.md)
+- [Swift](https://github.com/IGAWorksDev/SDK-Hybrid-Abx.Remaster-ClientSampleApp/blob/master/guide/ios/swift/Adbrix%20SDK%20Bridge%20연동하기.md)
