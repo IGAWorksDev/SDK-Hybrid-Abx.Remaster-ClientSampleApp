@@ -126,12 +126,10 @@ if (isIosBridgeAvailable()) {
 - SDK의 동작해야할 메소드는 `method_name` 키 값으로 설정하여 AdbrixJavascriptInterface에 전달해야합니다.
 
 	```swift
-	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard message.name == "adbrixBridge",
-              let json = message.body as? [String: Any],
-              let action = json["method_name"] as? String else {return}
-        guard let event = AdbrixJavascriptInterface(rawValue: action) else {return}
-        event.invoke(json: json)
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == interfaceName {
+            AdbrixJavascriptInterface.event(message: message.body)
+        }
     }
 	```
 	

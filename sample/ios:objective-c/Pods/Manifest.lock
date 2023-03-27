@@ -1,0 +1,16 @@
+PODS:
+  - AdBrixRmKit (2.4.0.1)
+
+DEPENDENCIES:
+  - AdBrixRmKit
+
+SPEC REPOS:
+  trunk:
+    - AdBrixRmKit
+
+SPEC CHECKSUMS:
+  AdBrixRmKit: ff91935d26e53c18ce6dfbe06fa8774aac354f34
+
+PODFILE CHECKSUM: 9af3dbb7adc5f5d8125a4f99fa2df81c8d385969
+
+COCOAPODS: 1.12.0
